@@ -28,29 +28,18 @@ namespace DeweySQLTableGenerator
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void btnReadData_Click(object sender, RoutedEventArgs e)
         {
-            //string[] scores = File.ReadAllLines("scorefile.txt");
-            //var orderedScores = scores.OrderByDescending(x => int.Parse(x.Split(' ')[1]));
-
-            //foreach (var score in orderedScores)
-            //{
-            //    Console.WriteLine(score);
-            //}
-
             DataTable dt = new DataTable();
 
             string[] input = File.ReadAllLines("dewey.txt");
 
             foreach (var line in input)
             {
-                //char[] space = { ' ' };
-                //string[] entry = line.Split(space, StringSplitOptions.RemoveEmptyEntries);
                 string[] entry = line.Split(':');
 
                 if (dt.Columns.Count == 0)
                 {
-
                     // Create the data columns for the data table based on the number of items
                     // on the first line of the file
                     for (int i = 0; i < entry.Length; i++)
@@ -58,37 +47,39 @@ namespace DeweySQLTableGenerator
                     
                 }
                 dt.Rows.Add(entry);
-
             }
 
-
-
-        }
-        public void addDelimiter()
-        {
-            string[] input = File.ReadAllLines("dewey.txt");
-            string[] output = new string[input.Length];
-            int i = 0;
-
-            foreach (string entry in input)
+            foreach (DataRow dr in dt.Rows)
             {
-                output[i] = input[i].Insert(3, ":");
-                i++;
+                txtBox.AppendText(dr.ItemArray[0].ToString());
+                
             }
-
-            i = 0;
-            foreach (string entry in output)
-            {
-                Console.WriteLine(output[i]);
-                i++;
-            }
-
-
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void btnWriteData_Click(object sender, RoutedEventArgs e)
         {
-            addDelimiter();
+            addDelimiterToFile dataFile = new addDelimiterToFile();
+
+            dataFile.addDelimiter("dewey.txt", "delimiter.txt", ":", 3);
+        }
+
+        private void btnOpenFileDialog_Click(object sender, RoutedEventArgs e)
+        {
+            var fileDialog = new System.Windows.Forms.OpenFileDialog();
+            var result = fileDialog.ShowDialog();
+            switch (result)
+            {
+                case System.Windows.Forms.DialogResult.OK:
+                    var file = fileDialog.FileName;
+                    txtBlock.Text = file;
+                    txtBlock.ToolTip = file;
+                    break;
+                case System.Windows.Forms.DialogResult.Cancel:
+                default:
+                    txtBlock.Text = null;
+                    txtBlock.ToolTip = null;
+                    break;
+            }
         }
 
     }
