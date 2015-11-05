@@ -1,4 +1,4 @@
-﻿<Window x:Class="DeweySQLTableGenerator.MainWindow"
+﻿<Window x:Class="AddDelimiterToFile.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add Delimiter" Height="500.858" Width="508.194" WindowStartupLocation="CenterScreen">

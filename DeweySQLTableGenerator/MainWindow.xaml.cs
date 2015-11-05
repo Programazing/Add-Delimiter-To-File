@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
-namespace DeweySQLTableGenerator
+namespace AddDelimiterToFile
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
