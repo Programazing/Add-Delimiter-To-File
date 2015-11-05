@@ -23,6 +23,8 @@ namespace DeweySQLTableGenerator
     /// </summary>
     public partial class MainWindow : Window
     {
+        addDelimiterToFile dataFile = new addDelimiterToFile();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -30,57 +32,104 @@ namespace DeweySQLTableGenerator
 
         private void btnReadData_Click(object sender, RoutedEventArgs e)
         {
-            DataTable dt = new DataTable();
-
-            string[] input = File.ReadAllLines("dewey.txt");
-
-            foreach (var line in input)
+            try
             {
-                string[] entry = line.Split(':');
+                DataTable dt = new DataTable();
+                string[] input = File.ReadAllLines(txtFileLocation.Text);
 
-                if (dt.Columns.Count == 0)
+                foreach (var line in input)
                 {
-                    // Create the data columns for the data table based on the number of items
-                    // on the first line of the file
-                    for (int i = 0; i < entry.Length; i++)
-                        dt.Columns.Add(new DataColumn("Column" + i, typeof(string)));
-                    
+                    string[] entry = line.Split(':');
+
+                    if (dt.Columns.Count == 0)
+                    {
+                        // Create the data columns for the data table based on the number of items
+                        // on the first line of the file
+                        for (int i = 0; i < entry.Length; i++)
+                            dt.Columns.Add(new DataColumn("Column" + i, typeof(string)));
+
+                    }
+                    dt.Rows.Add(entry);
                 }
-                dt.Rows.Add(entry);
+
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    txtBox.AppendText(dr.ItemArray[0].ToString() + System.Environment.NewLine);
+
+
+                }
             }
 
-            foreach (DataRow dr in dt.Rows)
+            catch (ArgumentException error)
             {
-                txtBox.AppendText(dr.ItemArray[0].ToString());
-                
+
+                MessageBox.Show("File Location cannot be Empty", "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void btnWriteData_Click(object sender, RoutedEventArgs e)
         {
-            addDelimiterToFile dataFile = new addDelimiterToFile();
+            if (txtDelimiter.Text != "" && txtNumberOfCharcters.Text != "" && txtFileLocation.Text != "")
+            {
+                try
+                {
+                    Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
 
-            dataFile.addDelimiter("dewey.txt", "delimiter.txt", ":", 3);
+                    saveDialog.FileName = "Document";
+                    saveDialog.DefaultExt = ".text";
+                    saveDialog.Filter = "Text documents (.txt)|*.txt";
+
+                    Nullable<bool> result = saveDialog.ShowDialog();
+
+                    if (result == true)
+                    {
+                        dataFile.addDelimiter(dataFile.originalFileLocation, saveDialog.FileName, txtDelimiter.Text, Convert.ToInt16(txtNumberOfCharcters.Text));
+
+                        MessageBox.Show("File Saved!", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else { MessageBox.Show("The Information above can not be Blank", "Warning", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void btnOpenFileDialog_Click(object sender, RoutedEventArgs e)
         {
             var fileDialog = new System.Windows.Forms.OpenFileDialog();
             var result = fileDialog.ShowDialog();
+
             switch (result)
             {
                 case System.Windows.Forms.DialogResult.OK:
-                    var file = fileDialog.FileName;
-                    txtBlock.Text = file;
-                    txtBlock.ToolTip = file;
+                    var file = fileDialog.FileName; //.SafeFileName only shows the File Name
+                    txtFileLocation.Text = file;
+                    txtFileLocation.ToolTip = file;
+                    dataFile.originalFileLocation = file;
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
-                    txtBlock.Text = null;
-                    txtBlock.ToolTip = null;
+                    txtFileLocation.Text = null;
+                    txtFileLocation.ToolTip = null;
                     break;
             }
         }
+
+        private void txtNumberOfCharcters_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+
+                e.Handled = true;
+
+            } 
+        }
+
+
+
 
     }
 

@@ -9,6 +9,22 @@ namespace DeweySQLTableGenerator
 {
     class addDelimiterToFile
     {
+        private string readFileLocation;
+        //private string writeFileLocation;
+
+        public string originalFileLocation
+        {
+            get { return readFileLocation; }
+
+            set { readFileLocation = value; }
+        }
+
+        //public string newFileLocation
+        //{
+        //    get { return writeFileLocation; }
+        //    set { writeFileLocation = value; }
+        //}
+
         public void addDelimiter(string fileLocationRead, string fileLocationWrite, string delimiter, int numberOfSpaces)
         {
             /*
